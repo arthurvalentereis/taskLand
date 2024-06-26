@@ -15,24 +15,27 @@ namespace TaskLand.API.Data.Repositories.Base
         {
             _context = context;
         }
-        public TEntity Add(TEntity entidade)
+
+        #region Sync
+        public TEntity Add(TEntity entity)
         {
-            _context.Set<TEntity>().Add(entidade);
-            return entidade;
+            _context.Set<TEntity>().Add(entity);
+            return entity;
         }
-        public IEnumerable<TEntity> AddList(IEnumerable<TEntity> entidades)
+       
+        public IEnumerable<TEntity> AddList(IEnumerable<TEntity> entities)
         {
-            _context.Set<TEntity>().AddRange(entidades);
-            return entidades;
+            _context.Set<TEntity>().AddRange(entities);
+            return entities;
         }
-        public void Delete(TEntity entidade)
+        public void Delete(TEntity entity)
         {
-            _context.Set<TEntity>().Remove(entidade);
+            _context.Set<TEntity>().Remove(entity);
         }
-        public TEntity Update(TEntity entidade)
+        public TEntity Update(TEntity entity)
         {
-            _context.Entry(entidade).State = EntityState.Modified;
-            return entidade;
+            _context.Entry(entity).State = EntityState.Modified;
+            return entity;
         }
         public bool Exists(Func<TEntity, bool> where) => _context.Set<TEntity>().Any(where);
         public IQueryable<TEntity> ListWhere(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includeProperties) => List(includeProperties).Where(where);
@@ -59,6 +62,18 @@ namespace TaskLand.API.Data.Repositories.Base
             foreach (var property in includeProperties) query = query.Include(property);
             return query;
         }
+        #endregion
+
+        #region Async
+
+        public async Task<TEntity> AddAsync(TEntity entity)
+        {
+            await _context.Set<TEntity>().AddAsync(entity);
+            return entity;
+        }
+
+        public async Task<List<TEntity>> ListAsync(params Expression<Func<TEntity, object>>[] includeProperties) =>
+           await List(includeProperties).ToListAsync();
 
         public async Task<List<TEntity>> ListWhereAsync(Expression<Func<TEntity, bool>> where, params Expression<Func<TEntity, object>>[] includeProperties) =>
              await List(includeProperties).Where(where).ToListAsync();
@@ -79,16 +94,18 @@ namespace TaskLand.API.Data.Repositories.Base
             return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<TEntity> UpdateAsync(TEntity entidade)
+        public async Task<TEntity> UpdateAsync(TEntity entity)
         {
-            _context.Entry(entidade).State = EntityState.Modified;
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            return entidade;
+            return entity;
         }
+
+ 
+
+        #endregion
         public void Dispose() => _context.Dispose();
 
-
-
-
+        
     }
 }
