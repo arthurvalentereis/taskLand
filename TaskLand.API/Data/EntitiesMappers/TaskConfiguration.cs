@@ -13,6 +13,7 @@ namespace TaskLand.API.Data.EntitiesMappers
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Name).HasColumnName("name");
             builder.Property(x => x.Description).HasColumnName("description");
+            builder.Property(x => x.Title).HasColumnName("title");
         }
     }
 }
