@@ -18,25 +18,7 @@ namespace TaskLand.API.Controllers
             _taskService = taskService;
         }
 
-        [HttpGet("task/{id}")]
-        [ProducesResponseType(typeof(ResponseTask), 200)]
-        [SwaggerOperation(
-            Summary = "Busca uma task através do ID"
-        )]
-        [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Get(long id)
-        {
-            try
-            {
-                var task = await _taskService.GetTask(id);
-                return Ok(task);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
+   
 
         [HttpGet("task")]
         [ProducesResponseType(typeof(List<ResponseTask>), StatusCodes.Status200OK)]
@@ -78,18 +60,38 @@ namespace TaskLand.API.Controllers
             }
         }
 
-        [HttpPut("update")]
+        [HttpGet("task/{id}")]
+        [ProducesResponseType(typeof(ResponseTask), 200)]
+        [SwaggerOperation(
+            Summary = "Busca uma task através do ID"
+        )]
+        [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(long id)
+        {
+            try
+            {
+                var task = await _taskService.GetTask(id);
+                return Ok(task);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        [HttpPut("update/{id}")]
         [ProducesResponseType(typeof(ResponseTask), StatusCodes.Status200OK)]
         [SwaggerOperation(
             Summary = "Atualiza uma task"
         )]
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update([FromBody] RequestTaskCreate taskRequest )
+        public async Task<IActionResult> Update(long id, [FromBody] RequestTaskUpdate taskRequest )
         {
             try
             {
-                var taskCreated = await _taskService.Create(taskRequest);
+                var taskCreated = await _taskService.Update(id,taskRequest);
                 return Ok(taskCreated);
             }
             catch (Exception ex)
@@ -105,7 +107,7 @@ namespace TaskLand.API.Controllers
         )]
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorMessage), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(long id)
+        public async Task<IActionResult> Delete(long id)
         {
             try
             {

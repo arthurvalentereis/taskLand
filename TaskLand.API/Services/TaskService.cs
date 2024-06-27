@@ -24,9 +24,14 @@ namespace TaskLand.API.Services
             return taskCreated;
         }
 
-        public async Task<Entities.Task> Update(RequestTaskUpdate taskRequest)
+        public async Task<Entities.Task> Update(long taskId,RequestTaskUpdate taskRequest)
         {
-            var taskToUpdate = _taskMapperService.ToEntity(taskRequest);
+            var taskToUpdate = await GetTask(taskId);
+
+            taskToUpdate.Description = taskRequest.Description;
+            taskToUpdate.Title = taskRequest.Title;
+            taskToUpdate.Name = taskRequest.Name;
+
             var updatedTask = await _unitOfWork.TaskRepository.UpdateAsync(taskToUpdate);
             return updatedTask;
         }
@@ -35,6 +40,7 @@ namespace TaskLand.API.Services
         {
             var taskToDelete = await GetTask(taskId);
             _unitOfWork.TaskRepository.Delete(taskToDelete);
+            _unitOfWork.SaveChanges();
             return taskToDelete;
         }
 
