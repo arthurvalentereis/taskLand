@@ -1,0 +1,21 @@
+version: '3.4'
+
+services:
+  taskland.api:
+    container_name: taskland_api
+    image: ${DOCKER_REGISTRY-}tasklandapi
+    build:
+      context: .
+      dockerfile: TaskLand.API/Dockerfile
+    ports:
+        - "54321:80"
+    depends_on:
+        - db
+  db:
+    container_name: taskland_db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+        SA_PASSWORD: "@task2024"
+        ACCEPT_EULA: "Y"
+    ports:
+        - "1433:1433"
